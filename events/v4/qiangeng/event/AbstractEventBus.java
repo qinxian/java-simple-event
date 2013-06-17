@@ -1,8 +1,8 @@
 package qiangeng.event;
 
-import static qiangeng.common.Util.unsafe;
 import static qiangeng.event.ShareLongArray.shareAddress;
 import static qiangeng.event.ShareLongArray.shareIndex;
+import static qiangeng.event.Util.unsafe;
 
 public class AbstractEventBus {
 	public static final long INITIAL = -1;
@@ -42,7 +42,7 @@ public class AbstractEventBus {
 
 			@Override
 			public void publish(long endOrdinal, long batch) {
-				unsafe.putLongVolatile(array, firstAddress, endOrdinal);
+				unsafe.putOrderedLong(array, firstAddress, endOrdinal);
 			}
 		};
 	}
@@ -93,7 +93,7 @@ public class AbstractEventBus {
 			@Override
 			public void publish(long endOrdinal) {
 				long ordinal = (endOrdinal - currentIndex) / bufferSize;
-				unsafe.putLongVolatile(array, shareAddress(currentIndex * groupLength), ordinal);
+				unsafe.putOrderedLong(array, shareAddress(currentIndex * groupLength), ordinal);
 			}
 		};
 	}
@@ -120,7 +120,7 @@ public class AbstractEventBus {
 			@Override
 			public void publish(long endOrdinal) {
 				int index = (int) (endOrdinal % groups);
-				unsafe.putLongVolatile(array, shareAddress(index * groupLength + firstIndex), endOrdinal / groups);
+				unsafe.putOrderedLong(array, shareAddress(index * groupLength + firstIndex), endOrdinal / groups);
 			}
 		};
 	}
@@ -165,7 +165,7 @@ public class AbstractEventBus {
 				if (dispatcher.isDone()) return;
 			}
 			dispatcher.dispatch(bufferSize, next, end);
-			unsafe.putLongVolatile(array, workAddress, end++);
+			unsafe.putOrderedLong(array, workAddress, end++);
 			next = end;
 			// if (isTerminated(array, maxOrdinalAddress)) return;
 		}
@@ -187,7 +187,7 @@ public class AbstractEventBus {
 					continue;
 				}
 				dispatcher.dispatch(bufferSize, next, end);
-				unsafe.putLongVolatile(array, workAddress, end);
+				unsafe.putOrderedLong(array, workAddress, end);
 				if (count != initialCount) count = initialCount;
 			}
 			count = retry.check(count);

@@ -5,8 +5,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import qiangeng.common.Util;
 import qiangeng.event.ShareLongArray;
+import qiangeng.event.Util;
 
 public class CompareTest {
 

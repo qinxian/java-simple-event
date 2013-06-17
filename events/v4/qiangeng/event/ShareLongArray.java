@@ -1,6 +1,6 @@
 package qiangeng.event;
 
-import static qiangeng.common.Util.unsafe;
+import static qiangeng.event.Util.unsafe;
 
 public class ShareLongArray {
 	private static final int base = unsafe.arrayBaseOffset(long[].class);
